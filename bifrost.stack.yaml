@@ -40,6 +40,9 @@ spec:
           value: debug
         - name: LOG_STYLE
           value: pretty
+        envFrom:
+        - secretRef:
+            name: bifrost-env
         volumeMounts:
         - name: appdir
           mountPath: /app/data
@@ -47,6 +50,10 @@ spec:
         - name: tmpdir
           mountPath: /tmp
           readOnly: false
+        - name: config
+          mountPath: /app/data/config.json
+          subPath: config.json
+          readOnly: true
         securityContext:
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
@@ -56,6 +63,9 @@ spec:
       - name: tmpdir
         emptyDir:
           medium: Memory
+      - name: config
+        configMap:
+          name: bifrost-config
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000

@@ -1,0 +1,22 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: bifrost-verify
+spec:
+  template:
+    spec:
+      runtimeClassName: kata
+      restartPolicy: Never
+      containers:
+      - name: bifrost-verify
+        image: docker.io/bluebrown/netutils
+        command:
+        - curl
+        - -X
+        - POST
+        - http://bifrost/v1/chat/completions
+        - -H
+        - "Content-Type: application/json"
+        - -d
+        - '{"model": "github-models/mistral-small-2503", "messages": [{"role": "user", "content": "Hello!"}]}'
