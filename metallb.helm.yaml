@@ -1,0 +1,11 @@
+---
+apiVersion: helm.k0sproject.io/v1beta1
+kind: Chart
+metadata:
+  name: metallb
+  namespace: kube-system
+spec:
+  namespace: default
+  chartName: metallb/metallb
+  repository:
+    url: https://metallb.github.io/metallb
