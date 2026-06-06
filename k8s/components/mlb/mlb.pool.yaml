@@ -2,11 +2,11 @@
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
-  name: first-pool
+  name: public
   namespace: default
 spec:
   addresses:
-  - 192.168.1.240-192.168.1.250
+  - 172.23.205.15-172.23.205.20
 ---
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement

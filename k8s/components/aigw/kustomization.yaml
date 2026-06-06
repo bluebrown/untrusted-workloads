@@ -1,0 +1,18 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ./bifrost.stack.yaml
+configMapGenerator:
+- name: bifrost-config
+  files:
+  - config.json=./bifrost.config.json
+secretGenerator:
+- name: bifrost-env
+  envs:
+  - ./bifrost.env
+
+# if no ingress controller is used
+# patches:
+# - path: ./bifrost.patch.hostnet.yaml
+

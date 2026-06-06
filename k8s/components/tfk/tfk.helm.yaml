@@ -1,0 +1,30 @@
+---
+apiVersion: helm.k0sproject.io/v1beta1
+kind: Chart
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  namespace: default
+  chartName: traefik/traefik
+  repository:
+    url: https://traefik.github.io/charts
+  values: |
+    service:
+      enabled: true
+      spec:
+        type: NodePort
+    providers:
+      kubernetesGateway:
+        enabled: true
+    gateway:
+      listeners:
+        web:
+          namespacePolicy:
+            from: All
+    ingressRoute:
+      dashboard:
+        enabled: true
+        matchRule: PathPrefix(`/`)
+        entryPoints:
+          - web

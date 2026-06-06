@@ -1,0 +1,7 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+# FIXME: pool is using crd and validating hook wont be ready
+resources:
+- ./mlb.helm.yaml
+- ./mlb.pool.yaml
