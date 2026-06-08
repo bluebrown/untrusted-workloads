@@ -29,3 +29,4 @@ sed -i "s|^root:[^:]*:|root:${pwh}:|" squashfs-root/etc/shadow
 sudo chown -R root:root squashfs-root
 truncate -s 1G "$rootfs"
 sudo mkfs.ext4 -d squashfs-root -F "$rootfs"
+sudo rm -rf squashfs-root

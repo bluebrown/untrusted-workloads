@@ -23,5 +23,5 @@ if ! [ -d "$dest" ]; then
   mv "$release" "$dest"
 fi
 
-ln -sr "$dest/firecracker-$suffix" bin/firecracker || true
-ln -sr "$dest/jailer-$suffix" bin/jailer || true
+ln -srf "$dest/firecracker-$suffix" bin/firecracker
+ln -srf "$dest/jailer-$suffix" bin/jailer
