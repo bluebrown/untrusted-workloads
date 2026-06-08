@@ -16,10 +16,12 @@ ukey=$(curl "http://spec.ccfc.min.s3.amazonaws.com/?prefix=firecracker-ci/$vers/
   grep -oP "(?<=<Key>)(firecracker-ci/$vers/$arch/ubuntu-[0-9]+\.[0-9]+\.squashfs)(?=</Key>)" |
   sort -V | tail -1)
 
-curl -LO "https://s3.amazonaws.com/spec.ccfc.min/$kkey"
-curl -LO "https://s3.amazonaws.com/spec.ccfc.min/$ukey"
+kernel="vmlinux"
+upstream="ubuntu.squashfs"
 
-upstream="$(basename "$ukey")"
+curl -Lo "$kernel" "https://s3.amazonaws.com/spec.ccfc.min/$kkey"
+curl -Lo "$upstream" "https://s3.amazonaws.com/spec.ccfc.min/$ukey"
+
 rootfs="${upstream%.*}.ext4"
 pwh=$(openssl passwd -6 "root")
 
