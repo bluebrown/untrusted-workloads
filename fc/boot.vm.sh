@@ -3,11 +3,12 @@ set -Eeuo pipefail
 
 boot_args="console=ttyS0 reboot=k panic=1"
 
-kernel="./.local/ci.vmlinux"
-rootfs="./.local/ci.rootfs.ext4"
-socket="./.local/fc.sock"
-config="./.local/fc.json"
-vsock=."/.local/v.sock"
+prefix=".local"
+kernel="$prefix/vmlinux"
+rootfs="$prefix/rootfs.ext4"
+socket="$prefix/fc.sock"
+config="$prefix/fc.json"
+vsock="$prefix/v.sock"
 
 cat >"$config" <<EOF
 {

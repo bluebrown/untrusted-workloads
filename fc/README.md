@@ -81,8 +81,13 @@ Then on the host to start the gvproxy:
 
 The logs inside the guest should report success:
 
-    $ tail -n 3 /var/log/gvforwarder.log
-    time="2026-06-09T09:56:07Z" level=info msg="waiting for packets..."
-    udhcpc: broadcasting select for 192.168.127.2, server 192.168.127.1
-    udhcpc: lease of 192.168.127.2 obtained from 192.168.127.1, lease time 3600
+    cat /var/log/gvforwarder.log
+
+The ip can be verified with the ip command:
+
+    ip addr show tap0
+
+Now something like a curl request should work:
+
+    curl redhat.com
 

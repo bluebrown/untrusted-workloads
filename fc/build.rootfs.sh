@@ -6,30 +6,42 @@ set -Eeuo pipefail
 # ✦ ❯ sudo apt install fuse2fs
 
 prefix="$PWD/.local"
-cd "$(mktemp -d)"
+tmpdir="$(mktemp -d)"
+trap 'rm -rf "$tmpdir"' EXIT
 
 mmdebstrap \
   --mode=unshare \
   --variant=minbase \
   --include=busybox-static \
+  --include=curl \
   --dpkgopt="path-exclude=/usr/share/doc/*" \
   --dpkgopt="path-exclude=/usr/share/man/*" \
   --dpkgopt="path-exclude=/usr/share/locale/*" \
   bookworm \
-  rootfs.tar
+  rootfs.tar # use tar and not ext4 due to permission
 
-truncate -s 150M rootfs.ext4
+truncate -s 250M rootfs.ext4
 mkfs.ext4 rootfs.ext4
 
 mkdir -p mnt
 fuse2fs -o fakeroot rootfs.ext4 mnt/
+# exclude dev to avoid permission issues
 tar --exclude='./dev' -xf rootfs.tar -C mnt/
-mkdir -p mnt/dev
+mkdir mnt/dev # add empty dev to make devtmpfs work
 
+# manual symlink to not use chroot
 for applet in $(mnt/usr/bin/busybox --list); do
   [ "$applet" = "busybox" ] && continue
   ln -sf busybox "mnt/usr/bin/$applet" 2>/dev/null || true
 done
+
+# non standard location found with strings command:
+# strings /usr/bin/busybox | grep default.script
+default_script="etc/udhcpc/default.script"
+mkdir -p "mnt/$(dirname "$default_script")"
+curl -Lo "mnt/$default_script" \
+  https://raw.githubusercontent.com/mirror/busybox/refs/heads/master/examples/udhcp/simple.script
+chmod +x "mnt/$default_script"
 
 cp "$prefix/bin/gvforwarder" mnt/usr/local/bin/
 chmod +x mnt/usr/local/bin/gvforwarder
