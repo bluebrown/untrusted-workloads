@@ -3,25 +3,29 @@ set -Eeuo pipefail
 
 version="v1.16.0"
 suffix="$version-x86_64"
-file="firecracker-$suffix.tgz"
-download_url="https://github.com/firecracker-microvm/firecracker/releases/download/$version/$file"
+tarball="firecracker-$suffix.tgz"
+download_url="https://github.com/firecracker-microvm/firecracker/releases/download/$version/$tarball"
+prefix="$HOME/.local"
 
-mkdir -p ~/.local/bin
-cd ~/.local
+mkdir -p "$prefix/bin"
+cd "$prefix"
 
-release="release-${file#*-}"
-release="${release%.*}"
-dest="${file%.*}"
-
-if ! [ -f "$file" ]; then
+if ! [ -f "$tarball" ]; then
   curl -LO "$download_url"
 fi
 
+# the directory inside the tarball is named release-<version> not
+# firecracker-<version>. use these variables to fix this, during
+# decompress
+dest="${tarball%.*}"
+release="release-${dest#*-}"
+
 if ! [ -d "$dest" ]; then
   rm -rf "$release" "$dest"
-  tar -xzf "$file"
+  tar -xzf "$tarball"
   mv "$release" "$dest"
 fi
 
-ln -srf "$dest/firecracker-$suffix" bin/firecracker
-ln -srf "$dest/jailer-$suffix" bin/jailer
+for prog in firecracker jailer; do
+  ln -srf "$dest/$prog-$suffix" bin/$prog
+done

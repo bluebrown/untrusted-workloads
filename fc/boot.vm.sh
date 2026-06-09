@@ -1,16 +1,13 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-iface="tap0"
 boot_args="console=ttyS0 reboot=k panic=1"
 
-kernel="./.local/vmlinux"
-rootfs="./.local/ubuntu.ext4"
+kernel="./.local/ci.vmlinux"
+rootfs="./.local/ci.rootfs.ext4"
 socket="./.local/fc.sock"
-config="./.local/fc-$iface.json"
+config="./.local/fc.json"
 vsock=."/.local/v.sock"
-
-ip addr show "$iface"
 
 cat >"$config" <<EOF
 {
