@@ -8,12 +8,12 @@ set -Eeuo pipefail
 prefix="$PWD/.local"
 tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
+cd "$tmpdir"
 
 mmdebstrap \
   --mode=unshare \
   --variant=minbase \
-  --include=busybox-static \
-  --include=curl \
+  --include=busybox-static,curl,socat \
   --dpkgopt="path-exclude=/usr/share/doc/*" \
   --dpkgopt="path-exclude=/usr/share/man/*" \
   --dpkgopt="path-exclude=/usr/share/locale/*" \
@@ -49,7 +49,7 @@ chmod +x mnt/usr/local/bin/gvforwarder
 cat >mnt/usr/local/bin/gvforwarder-run <<'EOF'
 #!/usr/bin/busybox sh
 mkdir -p /var/log
-exec /usr/local/bin/gvforwarder -stop-if-exist "" >> /var/log/gvforwarder.log 2>&1
+exec /usr/local/bin/gvforwarder >> /var/log/gvforwarder.log 2>&1
 EOF
 chmod +x mnt/usr/local/bin/gvforwarder-run
 
