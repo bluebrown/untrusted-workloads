@@ -14,6 +14,8 @@ set -Eeuo pipefail
 #   rsync \
 #   cpio
 
+: "${PREFIX:=.local}"
+
 cd /tmp
 
 if ! [ -d linux ]; then
@@ -29,9 +31,9 @@ if ! [ -f .config ]; then
   echo "CONFIG_TUN=y" >>.config
 fi
 
-make clean
-make olddefconfig
-make vmlinux CC=gcc-12 -j"$(nproc)"
+if ! [ -f vmlinux ]; then
+  make olddefconfig
+  make vmlinux CC=gcc-12 -j"$(nproc)"
+fi
 
-cd -
-mv /tmp/linux/vmlinux .local/
+mv /tmp/linux/vmlinux "$PREFIX"

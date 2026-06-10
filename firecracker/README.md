@@ -10,19 +10,15 @@ Example based on getting-started guide from firecracker docs:
 
 ## Basics
 
-First cd into the fc directory:
-
-    cd fc
-
 Install firecracker in the user home (assuming `~/.local/bin` is in
 `$PATH`):
 
-    bash -x dl.fc.sh
+    bash -x recipe/firecracker.sh
 
 Get a guest kernel and rootfs from the firecracker CI, for testing:
 
-    bash -x dl.guest.ci.sh
-    bash -x build.rootfs.ci.sh
+    bash -x recipe/firecracker.guest.sh
+    bash -x recipe/firecracker.rootfs.sh
 
 Make sure user has permission to kvm:
 
@@ -30,7 +26,7 @@ Make sure user has permission to kvm:
 
 Remove the sockets from the previous run, and start firecracker:
 
-    bash -x boot.vm.sh
+    bash -x firecracker/boot.sh
 
 > [!TIP]  
 > Executing the `reboot` command inside the vm will shut it down.
@@ -44,40 +40,32 @@ In the guest vm after logging in with user and pw == `root`:
      nohup socat TCP-LISTEN:8080,fork VSOCK-CONNECT:2:52 &
      curl localhost:8080
 
-There is also a [tap](./tap/vm.tap0.sh) based network setup, but this
-requires manually adjusting the vm config, and perform live operation
-with ip and bridge command.
-
 ## Integrating with gVisor
-
-> [!NOTE]  
-> Manual change of the [boot script](./boot.vm.sh), to point to custom
-> kernel and rootfs, required.
 
 Download
 [gvisor-tap-vsock](https://github.com/containers/gvisor-tap-vsock)
 binaries:
 
-    bash -x dl.gvisor.sh
+    bash -x recipe/gvisor.tap-vsock.sh
 
 Build a custom rootfs (assumes debian host):
 
-    bash -x build.rootfs.sh
+    bash -x recipe/rootfs.mmdebstrap.sh
 
 Also build a custom vmlinux with the required kernel modules such as
 vsock and tun enabled:
 
-    bash -x build.kernel.sh
+    bash -x recipe/vmlinux.fc.sh
 
-After adjusting the [boot script](./boot.vm.sh):
+Starting the VM after telling firecracker to use the custom kernel and
+rootfs.
 
-    bash -x boot.vm.sh
+     export FC_CONFIG=./firecracker/boot.custom.vsock.json
+     bash -x firecracker/boot.sh
 
 Then on the host to start the gvproxy:
-
-    .local/bin/gvproxy \
-      -listen unix:///$(pwd)/.local/v.sock_1024 \
-      -listen unix:///tmp/network.sock
+    
+    bash -x firecracker/proxy.sh
 
 The logs inside the guest should report success:
 
@@ -90,4 +78,3 @@ The ip can be verified with the ip command:
 Now something like a curl request should work:
 
     curl redhat.com
-

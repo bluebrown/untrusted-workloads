@@ -1,20 +1,22 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-prefix="$PWD/.local"
+: "${PREFIX:=.local}"
+
 upstream="ci.ubuntu.squashfs"
-
-mkdir -p "$prefix"
-cd "$prefix"
-
 rootfs="ci.rootfs.ext4"
 pwh=$(openssl passwd -6 "root")
+
+mkdir -p "$PREFIX"
+cd "$PREFIX"
 
 unsquashfs "$upstream"
 trap 'sudo rm -rf squashfs-root' EXIT
 
 sed -i "s|^root:[^:]*:|root:${pwh}:|" squashfs-root/etc/shadow
-cp bin/gvforwarder squashfs-root/bin/
+if [ -x bin/gvforwarder ]; then
+  cp bin/gvforwarder squashfs-root/bin/
+fi
 
 sudo chown -R root:root squashfs-root
 truncate -s 1G "$rootfs"

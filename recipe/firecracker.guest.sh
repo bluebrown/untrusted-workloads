@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
+: "${PREFIX:=.local}"
+
 arch="$(uname -m)"
 vers=v1.15 # 1.16 has no artifacts
 # vers="$(firecracker --version | awk 'NR==1{print $2}')"
-prefix="$PWD/.local"
 
-mkdir -p "$prefix"
-cd "$prefix"
+mkdir -p "$PREFIX"
+cd "$PREFIX"
 
 kkey=$(curl "http://spec.ccfc.min.s3.amazonaws.com/?prefix=firecracker-ci/$vers/$arch/vmlinux-&list-type=2" |
   grep -oP "(?<=<Key>)(firecracker-ci/$vers/$arch/vmlinux-[0-9]+\.[0-9]+\.[0-9]{1,3})(?=</Key>)" |

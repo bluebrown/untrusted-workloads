@@ -4,8 +4,9 @@ set -Eeuo pipefail
 # ✦ ❯ sudo apt install mmdebstrap
 # ✦ ❯ sudo apt install libarchive-tools e2fsprogs fuse
 # ✦ ❯ sudo apt install fuse2fs
+#
+: "${PREFIX:=.local}"
 
-prefix="$PWD/.local"
 tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
 cd "$tmpdir"
@@ -43,7 +44,7 @@ curl -Lo "mnt/$default_script" \
   https://raw.githubusercontent.com/mirror/busybox/refs/heads/master/examples/udhcp/simple.script
 chmod +x "mnt/$default_script"
 
-cp "$prefix/bin/gvforwarder" mnt/usr/local/bin/
+cp "$PREFIX/bin/gvforwarder" mnt/usr/local/bin/
 chmod +x mnt/usr/local/bin/gvforwarder
 
 cat >mnt/usr/local/bin/gvforwarder-run <<'EOF'
@@ -71,4 +72,4 @@ chmod +x mnt/usr/sbin/init
 fusermount -u mnt/
 rmdir mnt
 rm rootfs.tar
-mv rootfs.ext4 "${prefix?}/"
+mv rootfs.ext4 "${PREFIX?}/"
