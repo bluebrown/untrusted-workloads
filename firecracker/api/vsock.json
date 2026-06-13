@@ -1,0 +1,4 @@
+{
+  "guest_cid": 3,
+  "uds_path": "./.local/v.sock"
+}

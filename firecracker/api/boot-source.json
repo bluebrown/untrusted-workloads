@@ -1,0 +1,4 @@
+{
+  "kernel_image_path": "./.local/vmlinux",
+  "boot_args": "console=ttyS0 reboot=k panic=1"
+}

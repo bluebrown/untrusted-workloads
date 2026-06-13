@@ -1,0 +1,6 @@
+{
+  "log_path": "./.local/fc.log",
+  "level": "Debug",
+  "show_level": true,
+  "show_log_origin": true
+}

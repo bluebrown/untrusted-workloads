@@ -78,3 +78,18 @@ The ip can be verified with the ip command:
 Now something like a curl request should work:
 
     curl redhat.com
+
+> [!TIP]  
+> Inspect exposed ports:
+> 
+>     curl --unix-socket .local/gvproxy.sock http:/unix/services/forwarder/all | jq .
+>
+> Expose additional ports:
+>
+>     curl --unix-socket .local/gvproxy.sock http:/unix/services/forwarder/expose -X POST \
+>       -d '{"local":":8080","remote":"192.168.127.2:8080"}'
+
+It is also possible to ssh from the host into the guest:
+
+    ssh i .local/guest0 root@localhost -p 2222
+
